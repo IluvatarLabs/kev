@@ -1,0 +1,33 @@
+Kev (Python distribution: decision-model)
+Licensed under the Apache License, Version 2.0.
+
+Software copyright notice
+Copyright 2026 Jared Palmer
+Licensed under the Apache License, Version 2.0.
+
+--------------------------------------------------------------------------------
+Qwen3-1.7B
+https://huggingface.co/Qwen/Qwen3-1.7B (revision 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e)
+Copyright 2024 Alibaba Cloud
+Licensed under the Apache License, Version 2.0.
+
+The converted checkpoint is a modified version of this model: a trained LoRA adapter was merged into its weights, its
+language-model head is not included, and a decision head was added. The checkpoint directory carries the model's
+LICENSE file.
+
+--------------------------------------------------------------------------------
+Qwen3-4B and Qwen3-8B
+https://huggingface.co/Qwen/Qwen3-4B (revision 1cfa9a7208912126459214e8b04321603b3df60c)
+https://huggingface.co/Qwen/Qwen3-8B (revision b968826d9c46dd6066d109eabc6255188de91218)
+Copyright 2024 Alibaba Cloud
+Licensed under the Apache License, Version 2.0.
+
+The same conversion pipeline was also applied to these backbones. Any separately distributed converted checkpoint
+retains the parent's LICENSE and identifies the merged adapter and added decision head in its metadata.
+
+--------------------------------------------------------------------------------
+Datasets
+The training and evaluation corpora are prepared from public datasets whose repositories, revisions and recorded
+license terms are recorded in the generated data manifests during preparation.
+Those datasets retain their own terms; this repository's software license does not relicense them. Original dataset source
+texts are not distributed in this repository. The checkpoint contains no dataset files.

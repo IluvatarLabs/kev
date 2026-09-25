@@ -1,0 +1,6 @@
+graft recipes
+graft demo
+graft data/custom
+graft tests
+
+global-exclude *.py[cod] __pycache__ .DS_Store

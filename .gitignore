@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.DS_Store
+dist/
+build/
+/runs/
+/models/
+/data/cache/
+/data/raw/
+/data/targets/
+/data/prepared*/
+/data/panels/*.jsonl
+*.safetensors

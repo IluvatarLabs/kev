@@ -1,0 +1,51 @@
+{
+  "state": {
+    "customer": "Dana Whitfield, customer since 2019",
+    "channel": "email",
+    "message": "Hi, I ordered the TrailRunner 5 shoes (order #48213) two weeks ago. They arrived yesterday in a size 10 instead of the 9 I ordered, and the box was crushed. I also see two charges of $129.99 on my card for this order. I need the right size before my race on Saturday. Please fix this today or I will cancel my membership."
+  },
+  "questions": {
+    "department": {
+      "type": "choice",
+      "instructions": "Pick the single queue this email belongs in.",
+      "criteria": {
+        "returns": "Product returns, exchanges, incorrect items received",
+        "shipping": "Carrier problems: late, lost or crushed packages",
+        "billing": "Payments: double charges, refunds, card issues",
+        "account": "Membership, sign-in and account settings"
+      }
+    },
+    "resolution": {
+      "type": "choice",
+      "instructions": "If we could do only one thing for this customer, what would they ask for?",
+      "criteria": {
+        "exchange": "Give them the size they actually ordered",
+        "refund": "Return their money",
+        "replacement": "Ship an identical item again",
+        "information": "Just explain what happened"
+      }
+    },
+    "duplicate_charge": {
+      "type": "noul",
+      "instructions": "Has the customer's card been billed more than once for one order?"
+    },
+    "churn_risk": {
+      "type": "noul",
+      "instructions": "Might we lose this customer?",
+      "criteria": {
+        "true": "They say they may cancel or go elsewhere",
+        "false": "They intend to stay"
+      }
+    },
+    "urgency": {
+      "type": "score",
+      "instructions": "How quickly must an agent respond?",
+      "criteria": [
+        "whenever convenient",
+        "this week",
+        "within 48 hours",
+        "right now"
+      ]
+    }
+  }
+}

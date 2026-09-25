@@ -1,0 +1,69 @@
+# The conversion recipe (SPEC.md sections 5-8) for Qwen3-4B: identical to qwen3-1.7b.yaml except the parent and the corpus directory. Every stage of `python -m decision_model.convert` reads this file;
+# a stage reruns only when its section (or an upstream output) changes.
+parent: Qwen/Qwen3-4B
+revision: 1cfa9a7208912126459214e8b04321603b3df60c
+
+data:
+  seed: 20260924
+  out: data/prepared-qwen3-4b
+  pool_per_source: 1600          # deterministic draw from each public source's train split, before the group split
+  train_cap_per_source: 1000     # originals per public source, applied after the 70/10/10/10 group split
+  official_test_per_source: 150  # official test/validation rows in the locked test panel
+  showcase_per_source: {agnews: 30, trec: 25, banking77: 20, boolq: 30, mnli: 25, sst5: 30}
+  variants_per_source: 2         # showcase records with changed wording/descriptions/order (same group id)
+  unseen_per_source: 100         # PAWS / QNLI / Emotion, eval only
+  policy:
+    composition_groups_per_shape: 48   # 4 states per group, Kev TRAIN_SHAPES
+    contrastive_pairs_per_family: 72   # 2 states per pair, Kev contrastive families except the held-out one
+    train_cap: 2000                    # executable policy/compositional states in train
+    heldout_groups_per_shape: 10       # DEV_SHAPES -> dev, TEST_SHAPES -> test (whole structures held out)
+    heldout_contrastive_family: deadline
+    heldout_contrastive_pairs: 30
+    showcase_groups_per_test_shape: 1
+    showcase_heldout_pairs: 4
+  context: {max_state: 1024, max_row: 2048, max_packed: 4096}
+  sources:                       # dataset revisions pinned (the v1 corpus was built from exactly these)
+    agnews: {revision: eb185aade064a813bc0b7f42de02595523103ca4}
+    trec: {revision: 65752bf53af25bc935a0dce92fb5b6c930728450}
+    banking77: {revision: f54121560de48f2852f90be299010d1d6dc612ec}
+    boolq: {revision: 35b264d03638db9f4ce671b711558bf7ff0f80d5}
+    mnli: {revision: da70db2af9d09693783c3320c4249840212ee221}
+    sst5: {revision: e51bdcd8cd3a30da231967c1a249ba59361279a3}
+    paws: {revision: 161ece9501cf0a11f3e48bd356eaa82de46d6a09}
+    qnli: {revision: bcdcba79d07bc864c1c254ccfcedcce55bcc9a8c}
+    emotion: {revision: cab853a1dbdf4c42c2b3ef2173804746df8825fe}
+  custom:                        # user-supplied labelled-request corpora (decision_model.data.custom_records)
+    - {path: data/custom/support_tickets.jsonl, source_family: support_custom, split: {train: 0.7, dev: 0.1, calibration: 0.1, test: 0.1}}
+
+teacher:
+  out: data/targets
+  dtype: bfloat16
+  batch_tokens: 65536            # padded tokens per forward pass
+  prompt_format: label-chat-v1
+
+train:
+  out: train                     # relative to the convert --out directory
+  seed: 0
+  lora: {r: 16, alpha: 32, dropout: 0.05, targets: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]}
+  head_dim: 256
+  lr: 5.0e-5
+  weight_decay: 0.01
+  epochs: 2
+  microbatch: 1
+  accumulation: 8
+  pct_start: 0.1                 # OneCycle warm-up fraction (Kev's schedule)
+  clip: 1.0
+  gold_weight: 0.5               # t = 0.5*one_hot(gold) + 0.5*q_cyclic where an eligible cyclic target exists
+  autocast: bfloat16             # CUDA autocast forward; trainable parameters stay fp32
+  weights_dtype: float32
+  activation_checkpointing: false
+  eval_every: 200                # optimizer steps between development-NLL evaluations (plus every epoch end)
+  eval_batch: 8
+  max_steps: null                # null = the full two epochs; a number stops early (throughput measurement only)
+
+calibration:
+  grid: {low: 0.25, high: 4.0, points: 121}
+
+export:
+  dtype: bfloat16
+  check_requests: 8              # calibration records used for the export equivalence check (no choice depends on it)

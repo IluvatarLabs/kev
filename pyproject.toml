@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "decision-model"
+version = "0.1.0"
+description = "Convert a decoder LLM into a Jev-style typed decision model: Boolean/Choice/Score decisions with full probability distributions, runtime questions and options, shared-state inference"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "torch>=2.8",
+    "transformers>=5.17,<6",
+    "peft>=0.21",
+    "safetensors>=0.5",
+    "accelerate>=1.15",
+    "datasets>=3.0",
+    "huggingface-hub>=0.30",
+    "pydantic>=2.9",
+    "numpy>=2.0",
+    "pyyaml>=6",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+]
+
+[project.urls]
+Homepage = "https://github.com/IluvatarLabs/kev"
+Repository = "https://github.com/IluvatarLabs/kev"
+Issues = "https://github.com/IluvatarLabs/kev/issues"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "httpx>=0.28",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools]
+packages = ["decision_model", "decision_model.backbones"]
+
+# CUDA wheels on the Linux GPU host (Blackwell sm_120 needs a CUDA 12.8+ build); PyPI (CPU/MPS) elsewhere.
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
